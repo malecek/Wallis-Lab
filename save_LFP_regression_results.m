@@ -16,7 +16,9 @@ for i = 1:length(frequencies)
     filtered_LFP = filter_with_chirplet('raw_signal', raw_signal, ...
                                         'signal_parameters', sp, ...
                                         'chirplet', g);
-    filtered_LFP = filtered_LFP.time_domain;
+    % The filtered time domain is complex; take the absolute value to get the
+    % amplitude.
+    filtered_LFP = abs(filtered_LFP.time_domain);
     LFP_by_trial = cut_LFP_by_trial(filtered_LFP, SpikeInfo);
     save_string = ['LFP_regression/' session '-' int2str(electrode) ...
                    '-' regexprep(num2str(f), '\.', '_')];

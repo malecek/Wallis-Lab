@@ -109,6 +109,7 @@ else
                         eval([func '(SpikeInfo, trial_spikes, save_string)'])
                     else
                         eval([func '(session, unit, SpikeInfo, SpikeData)'])
+                    end
                 else
                     accum(count,:,:)=eval([func1 ...
                                         '(session,unit,SpikeInfo,SpikeData)']);
