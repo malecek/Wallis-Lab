@@ -101,7 +101,14 @@ else
             for j = 1:length(units)
                 unit = units(j);
                 if exist('func')
-                    eval([func '(session, unit, SpikeInfo, SpikeData)'])
+                    if strcmp(LFP_or_neur, 'neur')
+                        trial_spikes = get_trial_spikes(SpikeInfo,...
+                                                        SpikeData,unit);
+                        save_string = ['spike_regression/' session '-' ...
+                                       int2str(unit)];
+                        eval([func '(SpikeInfo, trial_spikes, save_string)'])
+                    else
+                        eval([func '(session, unit, SpikeInfo, SpikeData)'])
                 else
                     accum(count,:,:)=eval([func1 ...
                                         '(session,unit,SpikeInfo,SpikeData)']);
