@@ -33,7 +33,7 @@ end
 if strcmp(which_units, 'encoders')
     cd('~/Science/wallis/regression_results')
     encoder_types = {'pos'; 'neg'; 'mixed'};
-    if LFP_or_neur == 'neur'
+    if strcmp(LFP_or_neur, 'neur')
         load('encoders', 'pos_encoders', 'neg_encoders', 'mixed_encoders')
     else
         load('LFP_encoders', 'pos_encoders', 'neg_encoders')
@@ -92,7 +92,8 @@ else
             % return there.
             cd(data_dir)
             [SpikeInfo, ~, ~, SpikeData] = spk_read(session);
-            if LFP_or_neur == 'neur'
+            session = session(1:end-4);
+            if strcmp(LFP_or_neur, 'neur')
                 units = SpikeInfo.NeuronID;
             else
                 units = SpikeInfo.LFPID;
