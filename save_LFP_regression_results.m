@@ -2,6 +2,8 @@ function save_LFP_regression_results(session, electrode, SpikeInfo, SpikeData)
 % save_filtered_LFP(session, electrode, SpikeInfo, SpikeData)
 
 raw_signal = SpikeData{SpikeInfo.LFPIndex(SpikeInfo.LFPID == electrode)};
+% LFP is saved as an array of integers, and fft requires double precision.
+raw_signal = double(raw_signal);
 sp = get_signal_parameters('sampling_rate',1000,'number_points_time_domain',...
                                          length(raw_signal));
 frequencies = 2.^(0:0.5:8);
@@ -14,7 +16,9 @@ for i = 1:length(frequencies)
     filtered_LFP = filter_with_chirplet('raw_signal', raw_signal, ...
                                         'signal_parameters', sp, ...
                                         'chirplet', g);
+    filtered_LFP = filtered_LFP.time_domain;
     LFP_by_trial = cut_LFP_by_trial(filtered_LFP, SpikeInfo);
-    save_string = ['LFP_regression/' int2str(electrode) '-' num2str(f)];
+    save_string = ['LFP_regression/' session '-' int2str(electrode) ...
+                   '-' regexprep(num2str(f), '\.', '_')];
     save_regression_results(SpikeInfo, LFP_by_trial, save_string)
 end
