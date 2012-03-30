@@ -1,4 +1,4 @@
-function save_filtered_LFP(session, electrode, SpikeInfo, SpikeData)
+function save_LFP_regression_results(session, electrode, SpikeInfo, SpikeData)
 % save_filtered_LFP(session, electrode, SpikeInfo, SpikeData)
 
 raw_signal = SpikeData{SpikeInfo.LFPIndex(SpikeInfo.LFPID == electrode)};
@@ -14,6 +14,7 @@ for i = 1:length(frequencies)
     filtered_LFP = filter_with_chirplet('raw_signal', raw_signal, ...
                                         'signal_parameters', sp, ...
                                         'chirplet', g);
-    save(['~/Science/wallis/filtered_LFP/' int2str(electrode) '-' ...
-          num2str(f)], 'filtered_LFP')
+    LFP_by_trial = cut_LFP_by_trial(filtered_LFP, SpikeInfo);
+    save_string = ['LFP_regression/' int2str(electrode) '-' num2str(f)];
+    save_regression_results(SpikeInfo, LFP_by_trial, save_string)
 end
