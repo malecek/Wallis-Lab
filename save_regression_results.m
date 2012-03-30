@@ -17,5 +17,5 @@ for i = 1:10:size(trial_spikes,2)-199
     p_values = [p_values; stats.fstat.pval];
     r_squareds = [r_squareds; stats.rsquare];
 end
-cd ~/Documents/MATLAB/wallis/regression_results
-save([session(1:4) '-' num2str(neuron)], 'betas', 'p_values')
+cd ~/Science/wallis/regression_results
+save([session(1:4) '-' num2str(neuron)], 'betas', 'p_values', 'r_squareds')

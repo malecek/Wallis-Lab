@@ -1,17 +1,18 @@
-function batch_master(LFP_or_neur, all_or_encoders, varargin)
-% 1) batch_master(LFP_or_neur, all_or_encoders, func)
-% 2) batch_master(LFP_or_neur, all_or_encoders, func1, func2)
+function batch_master(LFP_or_neur, which_units, varargin)
+% 1) batch_master(LFP_or_neur, which_units, func)
+% 2) batch_master(LFP_or_neur, which_units, func1, func2)
 % 
 % This is the master function used to call a specified function on individual
-% electrodes or neurons, all of them or just the significant encoders.
+% electrodes or neurons, all of them, just the significant encoders, or a
+% specified subset of sessions.
 % 
 % Inputs
 % ------
 % LFP_or_neur : str
 %   'LFP' or 'neur'
 % 
-% all_or_encoders : str
-%   'all' or 'encoders'
+% which_units : str
+%   'all', 'encoders', or a matrix of session strings
 % 
 % func : str
 %   Function to be called on the specified neurons or electrodes.
@@ -29,9 +30,9 @@ else
     func1 = varargin{1};
     func2 = varargin{2};
 end
-data_dir = '~/Documents/MATLAB/wallis/data';
+data_dir = '~/Science/wallis/data';
 cd(data_dir)
-if length(all_or_encoders) == 8
+if strcmp(which_units, 'encoders')
     encoder_types = ['pos'; 'neg'];
     if LFP_or_neur == 'neur'
         load('encoders', 'pos_encoders', 'neg_encoders')
@@ -45,16 +46,16 @@ if length(all_or_encoders) == 8
         end
     end
     if exist('func')
-        rounds = 1;
+        n_encoder_types = 1;
         % Because each encoder will be processed individually,
         % keeping the types separate is unnecessary.
         pos_encoders = [pos_encoders; neg_encoders];
         n_encoders = [length(pos_encoders)];
     else
-        rounds = 2;
+        n_encoder_types = 2;
         n_encoders = [length(pos_encoders) length(neg_encoders)];
     end
-    for i = 1:rounds
+    for i = 1:n_encoder_types
         e_type = [encoder_types(i, :) '_encoders'];
         count = 1;
         for j = 1:n_encoders(i)
@@ -75,9 +76,18 @@ if length(all_or_encoders) == 8
     end
 else
     count = 1;
-    sessions = dir;
+    if strcmp(which_units, 'all')
+        sessions = dir;
+    else
+        % Add two garbage rows to the front so that the for loop works.
+        sessions = ['XXXX'; 'XXXX'; which_units];
+    end
     for i = 3:length(sessions)
-        session = sessions(i).name;
+        if strcmp(which_units, 'all')
+            session = sessions(i).name;
+        else
+            session = sessions(i, :);
+        end
         if regexp(session, '[AB][0-9]{3}')
             % In case you've moved since you were last in data_dir,
             % return there.
@@ -102,7 +112,7 @@ else
     end
 end
 if exist('func2')
-    for i = 1:rounds
+    for i = 1:n_encoder_types
         accum_type = ['accum_' encoder_types(i, :) '_encoders'];
         eval([func2 '(accum_type, encoder_types(i, :))'])
     end
