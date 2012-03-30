@@ -30,17 +30,16 @@ else
     func1 = varargin{1};
     func2 = varargin{2};
 end
-data_dir = '~/Science/wallis/data';
-cd(data_dir)
 if strcmp(which_units, 'encoders')
-    encoder_types = ['pos'; 'neg'];
+    cd('~/Science/wallis/regression_results')
+    encoder_types = {'pos'; 'neg'; 'mixed'};
     if LFP_or_neur == 'neur'
-        load('encoders', 'pos_encoders', 'neg_encoders')
+        load('encoders', 'pos_encoders', 'neg_encoders', 'mixed_encoders')
     else
         load('LFP_encoders', 'pos_encoders', 'neg_encoders')
         % Remove the frequency index.
         for i = size(encoder_types, 1)
-            e_type = [encoder_types(i,:) '_encoders'];
+            e_type = [encoder_types{i} '_encoders'];
             eval([e_type '_encoders = ' e_type '_encoders(:, 1:9);'])
             eval([e_type '_encoders = unique(' e_type '_encoders, ''rows'');'])
         end
@@ -52,26 +51,24 @@ if strcmp(which_units, 'encoders')
         pos_encoders = [pos_encoders; neg_encoders];
         n_encoders = [length(pos_encoders)];
     else
-        n_encoder_types = 2;
-        n_encoders = [length(pos_encoders) length(neg_encoders)];
+        n_encoder_types = 3;
+        n_encoders = [length(pos_encoders) length(neg_encoders) ...
+                      length(mixed_encoders)];
     end
     for i = 1:n_encoder_types
-        e_type = [encoder_types(i, :) '_encoders'];
-        count = 1;
+        e_type = [encoder_types{i} '_encoders'];
         for j = 1:n_encoders(i)
-            match = eval(['regexp(' e_type '(j,:), ''-'', ''split'')']);
-            session = match{1};
-            unit = match{2};
-            cd(session)
-            [SpikeInfo, ~, ~, SpikeData] = spk_read([session, '.spk']);
             if exist('func')
+                match = eval(['regexp(' e_type '(j,:), ''-'', ''split'')']);
+                session = match{1};
+                unit = match{2};
+                cd(session)
+                [SpikeInfo, ~, ~, SpikeData] = spk_read([session, '.spk']);
                 eval([func '(session, unit, SpikeInfo, SpikeData)'])
             else
-                eval(['accum_' e_type '(count,:,:) = ' ...
-                      func1 '(unit,SpikeInfo,SpikeData);'])
-                count = count + 1;
+                load(eval([e_type '(j, :)']))
+                eval(['accum_' e_type '(j,:) = r_squareds'';'])
             end
-            cd('..')
         end
     end
 else
@@ -113,7 +110,7 @@ else
 end
 if exist('func2')
     for i = 1:n_encoder_types
-        accum_type = ['accum_' encoder_types(i, :) '_encoders'];
-        eval([func2 '(accum_type, encoder_types(i, :))'])
+        accum_type = ['accum_' encoder_types{i} '_encoders'];
+        eval([func2 '(' accum_type ', encoder_types{i})'])
     end
 end
