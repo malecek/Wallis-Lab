@@ -72,6 +72,8 @@ if strcmp(which_units, 'encoders')
         end
     end
 else
+    data_dir = '~/Science/wallis/data';
+    cd(data_dir)
     count = 1;
     if strcmp(which_units, 'all')
         sessions = dir;
