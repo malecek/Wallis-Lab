@@ -2,7 +2,8 @@ HOW TO PRODUCE FIGURES
 
 * Pseudo-color plots of positive, negative, and mixed encoding neurons.
   1) batch_master('neur', 'all', 'save_regression_results')
-  2) batch_master('neur', 'encoders', 'whatever', 'plot_encoders')
+  2) save_reward_encoders
+  3) batch_master('neur', 'encoders', 'whatever', 'plot_encoders')
 
 * Pseudo-color plots of positive, negative, and mixed encoding frequencies.
   1) batch_master('LFP', 'all', 'save_LFP_regression_results')
