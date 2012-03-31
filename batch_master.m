@@ -79,7 +79,7 @@ else
         sessions = dir;
     else
         % Add two garbage rows to the front so that the for loop works.
-        sessions = ['XXXX'; 'XXXX'; which_units];
+        sessions = ['XXXX.spk'; 'XXXX.spk'; which_units];
     end
     for i = 3:length(sessions)
         if strcmp(which_units, 'all')
