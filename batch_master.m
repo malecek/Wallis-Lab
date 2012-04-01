@@ -11,7 +11,7 @@ function batch_master(LFP_or_neur, which_units, varargin)
 % LFP_or_neur : str
 %   'LFP' or 'neur'
 % 
-% which_units : str
+% which_units : str or matrix
 %   'all', 'encoders', or a matrix of session strings
 % 
 % func : str
@@ -81,7 +81,7 @@ else
         % Add two garbage rows to the front so that the for loop works.
         sessions = ['XXXX.spk'; 'XXXX.spk'; which_units];
     end
-    for i = 3:length(sessions)
+    for i = 3:size(sessions, 1)
         if strcmp(which_units, 'all')
             session = sessions(i).name;
         else
