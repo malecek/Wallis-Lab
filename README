@@ -2,9 +2,15 @@ HOW TO PRODUCE FIGURES
 
 * Pseudo-color plots of positive, negative, and mixed encoding neurons.
   1) batch_master('neur', 'all', 'save_regression_results')
-  2) save_reward_encoders
+  2) save_reward_encoders('neur', 0.001)
   3) batch_master('neur', 'encoders', 'whatever', 'plot_encoders')
 
-* Pseudo-color plots of positive, negative, and mixed encoding frequencies.
+* Firing rate plots of individual neurons.
+  1) [SpikeInfo, ~, ~, SpikeData] = spk_read(SESSION)
+  2) plot_mean_firing_rate(SESSION, NEURON, SpikeInfo, SpikeData)
+  
+* Pseudo-color plots of positive and negative encoding frequencies.
   1) batch_master('LFP', 'all', 'save_LFP_regression_results')
-  2) 
+  2) save_reward_encoders('LFP', 0.0001)
+  3) plot_mean_LFP_amplitude(SESSION, ELECTRODE, SpikeInfo, SpikeData,
+                             LOWER_BOUND, UPPER_BOUND)
