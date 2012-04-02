@@ -31,9 +31,9 @@ else
     func2 = varargin{2};
 end
 if strcmp(which_units, 'encoders')
-    cd('~/Science/wallis/regression_results')
     encoder_types = {'pos'; 'neg'; 'mixed'};
     if strcmp(LFP_or_neur, 'neur')
+        cd('~/Science/wallis/spike_regression')
         load('encoders', 'pos_encoders', 'neg_encoders', 'mixed_encoders')
     else
         load('LFP_encoders', 'pos_encoders', 'neg_encoders')
@@ -67,7 +67,8 @@ if strcmp(which_units, 'encoders')
                 eval([func '(session, unit, SpikeInfo, SpikeData)'])
             else
                 load(eval([e_type '(j, :)']))
-                eval(['accum_' e_type '(j,:) = r_squareds'';'])
+                eval(['accum_' e_type '_p_values(j,:) = p_values'';'])
+                eval(['accum_' e_type '_r_squareds(j,:) = r_squareds'';'])
             end
         end
     end
@@ -121,7 +122,8 @@ else
 end
 if exist('func2')
     for i = 1:n_encoder_types
-        accum_type = ['accum_' encoder_types{i} '_encoders'];
-        eval([func2 '(' accum_type ', encoder_types{i})'])
+        p_values = ['accum_' encoder_types{i} '_encoders_p_values'];
+        r_squareds = ['accum_' encoder_types{i} '_encoders_r_squareds'];
+        eval([func2 '(' r_squareds ', ' p_values ',  encoder_types{i})'])
     end
 end
