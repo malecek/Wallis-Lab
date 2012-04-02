@@ -1,19 +1,25 @@
-function plot_encoders(r_squareds, encoder_type)
+function plot_encoders(r_squareds, p_values, encoder_type)
 % plot_encoders(r_squareds, encoder_type)
 % 
 % Inputs
 % ------
 % r_squareds : matrix
-%   Neurons by windows.  Values are r^2.
+%   Neurons by windows.
+% 
+% p_values : matrix
+%   Neurons by windows.
 % 
 % encoder_type : string
 %   'neg', 'pos', or 'mixed'
 
+r_squareds = sort_r_squareds_by_latency(r_squareds, p_values);
 figure
 hold on
-pcolor(r_squareds)
+h = pcolor(r_squareds.*100);
+a = get(h, 'Parent');
+set(a, 'CLim', [0 20]);
 c = colorbar;
-set(get(c, 'ylabel'), 'string', 'r^2');
+set(get(c, 'ylabel'), 'string', 'PEV');
 shading('flat')
 xlabel('Time Relative to Reward Cue (ms)')
 ylabel('Neurons')
