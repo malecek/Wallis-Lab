@@ -1,35 +1,40 @@
-function plot_mean_LFP_power(fig_title, power_matrix, standard_error)
-% plot_mean_LFP_power(title, power_matrix, standard_error)
+function plot_mean_LFP_amplitude(session, electrode, low_reward, ...
+                                 high_reward, lower_bound, upper_bound)
+% plot_mean_LFP_amplitude(session, electrode, low_reward,
+% high_reward, lower_bound, upper_bound)
+% 
+% Plot lowest reward on the left and highest on the right.
 
 frequencies = 2.^(0:0.5:8);
+n_frequencies = length(frequencies);
 figure;
-% Note: The highest frequency is the top row of the plot (even
-% though it's the bottom row of the matrix).
-subplot(3, 1, 1)
-contourf(power_matrix - standard_error);
+subplot(1, 2, 1)
+hold on
+contourf(low_reward);
+set(gca, 'CLim', [lower_bound upper_bound]);
 ylabel('Frequency (Hz)');
 xlabel('Time Relative to Reward Cue (ms)')
-set(gca, 'XTick', 501:500:3501, 'XTickLabel', 0:500:3000, ...
-         'YTick', 1:2:length(frequencies), 'YTickLabel', frequencies(1:2:end));
+title([session '-' int2str(electrode) ': Lowest Reward'])
+plot([501 501], [1 n_frequencies], 'k', 'LineWidth', 1.5)
+plot([2001 2001], [1 n_frequencies], 'k', 'LineWidth', 1.5)
+set(gca, 'XTick', [501 2001], 'XTickLabel', [0 1500], ...
+         'YTick', 1:2:n_frequencies, 'YTickLabel', frequencies(1:2:end));
 c = colorbar;
-set(get(c, 'ylabel'), 'string', 'normalized power - std. err.');
+set(get(c, 'ylabel'), 'string', 'standardized analytic amplitude');
 
-subplot(3, 1, 2)
-contourf(power_matrix);
+subplot(1, 2, 2)
+hold on
+contourf(high_reward);
+set(gca, 'CLim', [lower_bound upper_bound]);
 ylabel('Frequency (Hz)');
 xlabel('Time Relative to Reward Cue (ms)')
-set(gca, 'XTick', 501:500:3501, 'XTickLabel', 0:500:3000, ...
-         'YTick', 1:2:length(frequencies), 'YTickLabel', frequencies(1:2:end));
+title([session '-' int2str(electrode) ': Highest Reward'])
+plot([501 501], [1 n_frequencies], 'k', 'LineWidth', 1.5)
+plot([2001 2001], [1 n_frequencies], 'k', 'LineWidth', 1.5)
+set(gca, 'XTick', [501 2001], 'XTickLabel', [0 1500], ...
+         'YTick', 1:2:n_frequencies, 'YTickLabel', frequencies(1:2:end));
 c = colorbar;
-set(get(c, 'ylabel'), 'string', 'normalized power');
+set(get(c, 'ylabel'), 'string', 'standardized analytic amplitude');
 
-subplot(3, 1, 3)
-contourf(power_matrix + standard_error);
-ylabel('Frequency (Hz)');
-xlabel('Time Relative to Reward Cue (ms)')
-set(gca, 'XTick', 501:500:3501, 'XTickLabel', 0:500:3000, ...
-         'YTick', 1:2:length(frequencies), 'YTickLabel', frequencies(1:2:end));
-c = colorbar;
-set(get(c, 'ylabel'), 'string', 'normalized power + std. err.');
-
-print('-dpdf', ['mean_LFP_power_' fig_title]);
+print('-dpdf', ['~/Science/wallis/figures/' session '_' int2str(electrode) ...
+                '_LFP_amplitude'])
