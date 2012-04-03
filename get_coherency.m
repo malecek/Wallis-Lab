@@ -10,10 +10,11 @@ cd('~/Science/wallis/data')
 [SpikeInfo, ~, ~, SpikeData] = spk_read([session '.spk']);
 spike_struct = get_spike_struct(neuron, SpikeInfo, SpikeData);
 
-electrode = round2(neuron, 10)
+electrode = round2(neuron, 10);
 LFP = SpikeData{SpikeInfo.LFPIndex(SpikeInfo.LFPID == electrode)};
 LFP = double(LFP);
 LFP_by_trial = cut_LFP_by_trial(LFP, SpikeInfo);
+LFP_by_trial = LFP_by_trial(:, 501:2001);
 params.Fs = 1000;
 params.fpass = [1 256];
 coherency = coherencycpt(LFP_by_trial, spike_struct, params);
