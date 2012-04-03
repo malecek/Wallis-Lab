@@ -8,14 +8,24 @@ session = match{1};
 neuron = str2num(match{2});
 cd('~/Science/wallis/data')
 [SpikeInfo, ~, ~, SpikeData] = spk_read([session '.spk']);
-spike_struct = get_spike_struct(neuron, SpikeInfo, SpikeData);
+i_neuron = SpikeInfo.NeuronIndex(SpikeInfo.NeuronID == neuron);
+spike_times = round(SpikeData{i_neuron}*1000);
 
 electrode = round2(neuron, 10);
 LFP = SpikeData{SpikeInfo.LFPIndex(SpikeInfo.LFPID == electrode)};
 LFP = double(LFP);
-LFP_by_trial = cut_LFP_by_trial(LFP, SpikeInfo);
-LFP_by_trial = LFP_by_trial(:, 501:2001);
+
+% coherencycpt needs a time X trials matrix for the LFP.  We will
+% build this by assuming that each 3000 ms segment of the session
+% is a trial, cutting out the remainder at the end of the session.
+remainder = mod(length(LFP), 3000);
+LFP = LFP(1:end-remainder);
+while spike_times(end) > length(LFP)
+    spike_times = spike_times(1:end-1);
+end
+LFP = reshape(LFP, 3000, length(LFP)/3000);
+
 params.Fs = 1000;
 params.fpass = [1 256];
-coherency = coherencycpt(LFP_by_trial, spike_struct, params);
+coherency = coherencycpt(LFP, spike_times, params);
 coherency = mean(C, 2);
