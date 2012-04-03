@@ -14,3 +14,7 @@ HOW TO PRODUCE FIGURES
   2) save_reward_encoders('LFP', 0.0001)
   3) plot_mean_LFP_amplitude(SESSION, ELECTRODE, SpikeInfo, SpikeData,
                              LOWER_BOUND, UPPER_BOUND)
+
+* Line plot of number of positively and negatively encoding electrodes.
+  1) plot_LFP_encoders
+
